@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2021 LINE Corporation. All rights reserved.
- * LINE Corporation PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
-
 package com.example.armeriacircuitbreakerwithokhttpclient.config;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
