@@ -16,10 +16,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.squareup.okhttp3:okhttp:4.9.3'
 	implementation 'com.squareup.okhttp3:logging-interceptor:4.9.3'
-	compileOnly 'org.projectlombok:lombok:1.18.18'
+	implementation 'com.linecorp.armeria:armeria-spring-boot-autoconfigure:0.99.7'
 
-	testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
-	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.1")
+	compileOnly 'org.projectlombok:lombok:1.18.22'
+
+	testImplementation('org.junit.jupiter:junit-jupiter-api:5.8.2')
+	testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.8.2')
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 

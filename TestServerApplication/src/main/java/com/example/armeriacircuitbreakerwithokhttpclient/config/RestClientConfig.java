@@ -18,6 +18,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
+import com.linecorp.armeria.client.circuitbreaker.CircuitBreaker;
+
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 
@@ -36,9 +38,9 @@ public class RestClientConfig implements RestTemplateCustomizer {
     public OkHttpClient okHttpClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         return builder
-                .connectTimeout(Duration.ofMillis(1000))
-                .readTimeout(Duration.ofMillis(3000))
-                .callTimeout(Duration.ofMillis(3000))
+                .connectTimeout(Duration.ofSeconds(1))
+                .readTimeout(Duration.ofSeconds(3))
+                .callTimeout(Duration.ofSeconds(3))
                 .connectionPool(new ConnectionPool(50, 5000,
                                                    TimeUnit.MILLISECONDS))
                 .build();
@@ -46,16 +48,17 @@ public class RestClientConfig implements RestTemplateCustomizer {
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder,
-                                     OkHttpClient okHttpClient,
-                                     OkHttpRetryInterceptor okHttpRetryInterceptor) {
+                                     OkHttpClient okHttpClient) {
+        CircuitBreaker circuitBreaker = CircuitBreakersConfig.testCircuitBreaker();
+        OkHttpCircuitBreakerRetryInterceptor interceptor = new OkHttpCircuitBreakerRetryInterceptor(circuitBreaker, 5);
         return builder
                 .requestFactory(() -> {
                     OkHttpClient httpClient = okHttpClient.newBuilder()
-                                                          .addInterceptor(okHttpRetryInterceptor)
+                                                          .addInterceptor(interceptor)
                                                           .connectionPool(new ConnectionPool(0, 1,
                                                                                              TimeUnit.MILLISECONDS))
-                                                          .connectTimeout(Duration.ofMillis(1000))
-                                                          .readTimeout(Duration.ofMillis(3000))
+                                                          .connectTimeout(Duration.ofSeconds(1))
+                                                          .readTimeout(Duration.ofSeconds(3))
                                                           .build();
                     OkHttp3ClientHttpRequestFactory clientHttpRequestFactory
                             = new OkHttp3ClientHttpRequestFactory(httpClient);
@@ -65,7 +68,7 @@ public class RestClientConfig implements RestTemplateCustomizer {
     }
 
     @Bean
-    public OkHttpRetryInterceptor retryOkHttpInterceptor() {
-        return new OkHttpRetryInterceptor(5);
+    public OkHttpCircuitBreakerRetryInterceptor retryOkHttpInterceptor(CircuitBreaker circuitBreaker) {
+        return new OkHttpCircuitBreakerRetryInterceptor(circuitBreaker, 5);
     }
 }
