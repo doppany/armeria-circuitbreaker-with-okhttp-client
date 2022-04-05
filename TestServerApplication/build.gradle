@@ -14,9 +14,12 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation'org.springframework.boot:spring-boot-starter-aop'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'com.squareup.okhttp3:okhttp:4.9.3'
 	implementation 'com.squareup.okhttp3:logging-interceptor:4.9.3'
 	implementation 'com.linecorp.armeria:armeria-spring-boot-autoconfigure:0.99.7'
+	implementation'io.micrometer:micrometer-registry-prometheus'
 
 	compileOnly 'org.projectlombok:lombok:1.18.22'
 	annotationProcessor 'org.projectlombok:lombok:1.18.22'

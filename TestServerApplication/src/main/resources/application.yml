@@ -1,0 +1,7 @@
+management:
+  server:
+    port: 9999
+  endpoints:
+    web:
+      exposure:
+        include: info, health, prometheus, metrics, loggers

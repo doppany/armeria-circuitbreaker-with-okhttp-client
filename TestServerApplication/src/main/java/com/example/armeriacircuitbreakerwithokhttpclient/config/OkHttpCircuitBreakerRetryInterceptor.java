@@ -38,7 +38,6 @@ public class OkHttpCircuitBreakerRetryInterceptor implements Interceptor {
 
             int tryCount = 0;
             while (isNull(response) && tryCount < retryCount) {
-                circuitBreaker.onFailure();
                 log.info("tryCount : {}, retryCount: {}, onFailure", tryCount, retryCount);
                 tryCount++;
                 Request newRequest = request.newBuilder().build();
@@ -67,13 +66,14 @@ public class OkHttpCircuitBreakerRetryInterceptor implements Interceptor {
         Response response = null;
         try {
             response = chain.proceed(request);
-            if (response.isSuccessful() || response.isRedirect()) {
+        } catch (Exception e) {
+            log.warn("Failed request {}", request, e);
+        } finally {
+            if (nonNull(response) && (response.isSuccessful() || response.isRedirect())) {
                 circuitBreaker.onSuccess();
             } else {
                 circuitBreaker.onFailure();
             }
-        } catch (Exception e) {
-            log.warn("Failed request {}", request, e);
         }
         return response;
     }
