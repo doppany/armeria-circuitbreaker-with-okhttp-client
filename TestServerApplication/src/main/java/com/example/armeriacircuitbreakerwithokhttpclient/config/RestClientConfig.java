@@ -1,6 +1,5 @@
 package com.example.armeriacircuitbreakerwithokhttpclient.config;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -10,6 +9,7 @@ import org.springframework.boot.web.client.RestTemplateCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,7 +24,7 @@ public class RestClientConfig implements RestTemplateCustomizer {
     @Override
     public void customize(RestTemplate restTemplate) {
         restTemplate.getInterceptors().add((req, body, execution) -> {
-            req.getHeaders().add(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_VALUE);
+            req.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
             return execution.execute(req, body);
         });
     }
@@ -33,9 +33,9 @@ public class RestClientConfig implements RestTemplateCustomizer {
     public OkHttpClient okHttpClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         return builder
-                .connectTimeout(Duration.ofSeconds(1))
-                .readTimeout(Duration.ofSeconds(3))
-                .callTimeout(Duration.ofSeconds(3))
+                .connectTimeout(Duration.ofSeconds(3))
+                .readTimeout(Duration.ofSeconds(5))
+                .callTimeout(Duration.ofSeconds(10))
                 .connectionPool(new ConnectionPool(50, 5000,
                                                    TimeUnit.MILLISECONDS))
                 .build();

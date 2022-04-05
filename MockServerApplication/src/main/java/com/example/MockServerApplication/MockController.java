@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MockController {
     private static final AtomicInteger REQ_CNT = new AtomicInteger();
     @GetMapping("/world")
-    ResponseEntity<String> world(){
+    ResponseEntity<String> world() {
         if(REQ_CNT.addAndGet(1) % 2 == 0) {
             return ResponseEntity.ok().body("success");
         } else {

@@ -1,6 +1,7 @@
 package com.example.armeriacircuitbreakerwithokhttpclient.config;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.io.IOException;
@@ -38,6 +39,7 @@ public class OkHttpCircuitBreakerRetryInterceptor implements Interceptor {
             int tryCount = 0;
             while (isNull(response) && tryCount < retryCount) {
                 circuitBreaker.onFailure();
+                log.info("tryCount : {}, retryCount: {}, onFailure", tryCount, retryCount);
                 tryCount++;
                 Request newRequest = request.newBuilder().build();
                 response = doRequest(chain, newRequest);
@@ -67,6 +69,8 @@ public class OkHttpCircuitBreakerRetryInterceptor implements Interceptor {
             response = chain.proceed(request);
             if (response.isSuccessful() || response.isRedirect()) {
                 circuitBreaker.onSuccess();
+            } else {
+                circuitBreaker.onFailure();
             }
         } catch (Exception e) {
             log.warn("Failed request {}", request, e);

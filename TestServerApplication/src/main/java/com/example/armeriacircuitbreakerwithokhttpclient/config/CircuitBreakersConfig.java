@@ -13,7 +13,7 @@ public class CircuitBreakersConfig {
     public static CircuitBreaker testCircuitBreaker() {
         return CircuitBreaker
                 .builder("test-armeria-circuit-breaker")
-                .counterSlidingWindow(Duration.ofSeconds(10))
+                .counterSlidingWindow(Duration.ofSeconds(20))
                 .circuitOpenWindow(Duration.ofSeconds(5))
                 .failureRateThreshold(0.3)
                 .minimumRequestThreshold(5)
